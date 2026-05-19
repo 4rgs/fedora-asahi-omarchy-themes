@@ -46,9 +46,9 @@
 
 ### Display Manager: SDDM → greetd + gtkgreet
 - Replaced SDDM with greetd + gtkgreet for better theme persistence
-- Created `omarchy-enable-greetd` — sets up greetd, greeter Sway config, theme sync
+- Created `omarchy-enable-greetd` — sets up greetd with greeter Sway config
 - Created `gtkgreet.css.tpl` — themed greeter CSS using omarchy colors
-- Updated `omarchy-theme-set` — generates gtkgreet CSS and syncs to greeter user config
-- greetd uses the omarchy background image and GTK theme automatically
+- Updated `omarchy-theme-set` — generates gtkgreet CSS from theme colors
+- greetd config references theme files directly from `/home/4rgs/` (no sudo needed after setup)
 - SDDM configs and theme files deprecated
-- Updated install script packages (greetd/gtkgreet instead of sddm)
+- Updated install script packages and config templates
