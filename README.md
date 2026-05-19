@@ -1,5 +1,7 @@
 # Fedora Asahi Omarchy Themes
 
+![Fedora Asahi Omarchy Themes](example.png)
+
 Configuración estilo Omarchy para Fedora Asahi + Sway. Sistema completo de tematización con 19 temas, gestor de pantalla themado (greetd + gtkgreet), bloqueo de pantalla, terminal transparente y más.
 
 ## Requisitos
@@ -50,7 +52,7 @@ swaymsg reload
 | `$mod+Shift+R` | Reiniciar waybar |
 | `$mod+Shift+L` | Bloquear pantalla |
 | `$mod+Shift+C` | Recargar Sway |
-| `Print` | Captura de pantalla |
+| `Print` / `$mod+Shift+P` | Menú de captura de pantalla |
 | `$mod+Shift+Print` | Captura de área |
 
 ## Temas disponibles
