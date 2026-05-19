@@ -17,16 +17,16 @@ Rectangle {
         target: sddm
 
         function onLoginSucceeded() {
-            errorMessage.color = "#82FB9C"
+            errorMessage.color = "#7fbbb3"
             errorMessage.text = textConstants.loginSucceeded
         }
         function onLoginFailed() {
             password.text = ""
-            errorMessage.color = "#50f872"
+            errorMessage.color = "#e67e80"
             errorMessage.text = textConstants.loginFailed
         }
         function onInformationMessage(message) {
-            errorMessage.color = "#50f872"
+            errorMessage.color = "#e67e80"
             errorMessage.text = message
         }
     }
@@ -45,14 +45,14 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(11,12,22, 0.5)
+        color: Qt.rgba(45,53,59, 0.5)
 
         Clock {
             id: clock
             anchors.margins: 5
             anchors.top: parent.top; anchors.right: parent.right
 
-            color: "#ddf7ff"
+            color: "#d3c6aa"
             timeFont.family: "Cascadia Code NF"
         }
 
@@ -70,7 +70,7 @@ Rectangle {
                 spacing: 12
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#ddf7ff"
+                    color: "#d3c6aa"
                     verticalAlignment: Text.AlignVCenter
                     height: text.implicitHeight
                     width: parent.width
@@ -90,7 +90,7 @@ Rectangle {
                         text: textConstants.userName
                         font.bold: true
                         font.pixelSize: 12
-                        color: "#ddf7ff"
+                        color: "#d3c6aa"
                     }
 
                     TextBox {
@@ -98,8 +98,8 @@ Rectangle {
                         width: parent.width; height: 30
                         text: userModel.lastUser
                         font.pixelSize: 14
-                        color: "#ddf7ff"
-                        backgroundColor: "#0B0C16"
+                        color: "#d3c6aa"
+                        backgroundColor: "#2d353b"
 
                         KeyNavigation.backtab: rebootButton; KeyNavigation.tab: password
 
@@ -121,15 +121,15 @@ Rectangle {
                         text: textConstants.password
                         font.bold: true
                         font.pixelSize: 12
-                        color: "#ddf7ff"
+                        color: "#d3c6aa"
                     }
 
                     PasswordBox {
                         id: password
                         width: parent.width; height: 30
                         font.pixelSize: 14
-                        color: "#ddf7ff"
-                        backgroundColor: "#0B0C16"
+                        color: "#d3c6aa"
+                        backgroundColor: "#2d353b"
 
                         KeyNavigation.backtab: name; KeyNavigation.tab: session
 
@@ -160,15 +160,15 @@ Rectangle {
                             wrapMode: TextEdit.WordWrap
                             font.bold: true
                             font.pixelSize: 12
-                            color: "#ddf7ff"
+                            color: "#d3c6aa"
                         }
 
                         ComboBox {
                             id: session
                             width: parent.width; height: 30
                             font.pixelSize: 14
-                            color: "#ddf7ff"
-                            backgroundColor: "#0B0C16"
+                            color: "#d3c6aa"
+                            backgroundColor: "#2d353b"
 
                             arrowIcon: Qt.resolvedUrl("angle-down.png")
 
@@ -194,15 +194,15 @@ Rectangle {
                             wrapMode: TextEdit.WordWrap
                             font.bold: true
                             font.pixelSize: 12
-                            color: "#ddf7ff"
+                            color: "#d3c6aa"
                         }
 
                         LayoutBox {
                             id: layoutBox
                             width: parent.width; height: 30
                             font.pixelSize: 14
-                            color: "#ddf7ff"
-                            backgroundColor: "#0B0C16"
+                            color: "#d3c6aa"
+                            backgroundColor: "#2d353b"
 
                             arrowIcon: Qt.resolvedUrl("angle-down.png")
 
@@ -231,8 +231,8 @@ Rectangle {
                         id: loginButton
                         text: textConstants.login
                         width: parent.btnWidth
-                        color: "#ddf7ff"
-                        backgroundColor: "#82FB9C"
+                        color: "#d3c6aa"
+                        backgroundColor: "#7fbbb3"
 
                         onClicked: sddm.login(name.text, password.text, sessionIndex)
 
@@ -243,8 +243,8 @@ Rectangle {
                         id: shutdownButton
                         text: textConstants.shutdown
                         width: parent.btnWidth
-                        color: "#ddf7ff"
-                        backgroundColor: "#50f872"
+                        color: "#d3c6aa"
+                        backgroundColor: "#e67e80"
 
                         onClicked: sddm.powerOff()
 
@@ -255,8 +255,8 @@ Rectangle {
                         id: rebootButton
                         text: textConstants.reboot
                         width: parent.btnWidth
-                        color: "#ddf7ff"
-                        backgroundColor: "#50f7d4"
+                        color: "#d3c6aa"
+                        backgroundColor: "#dbbc7f"
 
                         onClicked: sddm.reboot()
 

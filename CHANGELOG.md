@@ -43,3 +43,12 @@
 - Added `omarchy-sessiontui` — TUI for lock, logout, switch user, suspend, reboot, shutdown
 - Added `omarchy-launch-sessiontui` — single-instance launcher (TUI.float class)
 - Replaced swaynag exit with session TUI on `Super+Shift+e`
+
+### Display Manager: SDDM → greetd + gtkgreet
+- Replaced SDDM with greetd + gtkgreet for better theme persistence
+- Created `omarchy-enable-greetd` — sets up greetd, greeter Sway config, theme sync
+- Created `gtkgreet.css.tpl` — themed greeter CSS using omarchy colors
+- Updated `omarchy-theme-set` — generates gtkgreet CSS and syncs to greeter user config
+- greetd uses the omarchy background image and GTK theme automatically
+- SDDM configs and theme files deprecated
+- Updated install script packages (greetd/gtkgreet instead of sddm)

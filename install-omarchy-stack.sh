@@ -34,7 +34,7 @@ PACKAGES=(
     power-profiles-daemon
     wireplumber playerctl wl-clipboard jq
     ripgrep fd-find bat eza
-    sddm sddm-wayland-sway
+    greetd gtkgreet greetd-selinux
 )
 MISSING=()
 for pkg in "${PACKAGES[@]}"; do
@@ -531,21 +531,49 @@ disown
 WPEOF
 chmod +x "$HOME/.config/sway/wallpaper.sh"
 
-# ─── SDDM (display manager) ────────────────────────────────────────────────
-info "Setting up SDDM display manager..."
-sudo mkdir -p /etc/sddm.conf.d
-sudo tee /etc/sddm.conf.d/wayland.conf > /dev/null << 'SDDMEOF'
-[General]
-DisplayServer=wayland
-[Wayland]
-CompositorCommand=sway
-Session=sway.desktop
-SDDMEOF
-sudo systemctl enable --now sddm 2>/dev/null || true
+# ─── greetd (display manager) ──────────────────────────────────────────────
+info "Setting up greetd display manager..."
+sudo mkdir -p /etc/greetd
 
-# Enable themed SDDM login screen
-sudo "$HOME/.local/bin/omarchy-enable-sddm-theme" 2>/dev/null || \
-    warn "Run 'sudo $HOME/.local/bin/omarchy-enable-sddm-theme' after first theme setup"
+sudo tee /etc/greetd/config.toml > /dev/null << 'GREETDEOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "sway --config /etc/greetd/greetd-sway-config"
+user = "greeter"
+GREETDEOF
+
+sudo tee /etc/greetd/greetd-sway-config > /dev/null << 'SWAYEOF'
+# Minimal Sway config for greetd greeter
+exec swaybg -i /var/lib/greeter/.config/omarchy/current/sddm-bg -m fill
+exec gtkgreet
+
+input type:keyboard {
+    xkb_layout "latam"
+    xkb_options "ctrl:nocaps"
+}
+
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+default_border pixel 1
+
+include /etc/sway/config.d/*
+SWAYEOF
+
+# Set up greeter user config
+GREETER_HOME=$(getent passwd greeter | cut -d: -f6)
+if [ -n "$GREETER_HOME" ]; then
+    sudo mkdir -p "$GREETER_HOME/.config/gtkgreet" "$GREETER_HOME/.config/omarchy/current"
+fi
+
+# Disable SDDM if installed, enable greetd
+sudo systemctl disable --now sddm 2>/dev/null || true
+sudo systemctl enable --now greetd
 
 # ─── Enable system services ──────────────────────────────────────────────────
 info "Enabling system services..."
@@ -568,7 +596,7 @@ info "Installation complete!"
 echo ""
 echo "  ${YELLOW}Next steps:${NC}"
 echo "  1. Log out and back in (or run 'zsh' to start using Zsh)"
-echo "  2. SDDM will start automatically — select Sway from the session menu"
+echo "  2. greetd will start automatically — log in with your GTK-themed greeter"
 echo "  3. Open nvim to finish LazyVim plugin installation"
 echo "  4. Set up 1Password manually if needed"
 echo ""

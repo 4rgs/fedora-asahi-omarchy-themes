@@ -118,12 +118,16 @@ elif [ -n "$bg" ]; then
     cp "$bg" "$SDDM_BG" 2>/dev/null
 fi
 
-# Sync to system SDDM theme dir (if user-writable)
-SDDM_SYSTEM="/usr/share/sddm/themes/omarchy"
-if [ -w "$SDDM_SYSTEM" ]; then
-    cp "$HOME/.config/sddm/themes/omarchy/Main.qml" "$SDDM_SYSTEM/Main.qml" 2>/dev/null
-    cp "$HOME/.config/sddm/themes/omarchy/theme.conf" "$SDDM_SYSTEM/theme.conf" 2>/dev/null
-    cp "$SDDM_BG" "$SDDM_SYSTEM/background" 2>/dev/null
+# ── greetd / gtkgreet (login screen) ────────────────────
+process_template "$TEMPLATES_DIR/gtkgreet.css.tpl" "$HOME/.config/omarchy/current/gtkgreet.css"
+
+# Copy background and CSS to greeter user's config
+GREETER_HOME="/var/lib/greeter"
+if [ -d "$GREETER_HOME" ]; then
+    sudo mkdir -p "$GREETER_HOME/.config/gtkgreet" "$GREETER_HOME/.config/omarchy/current"
+    sudo cp "$HOME/.config/omarchy/current/gtkgreet.css" "$GREETER_HOME/.config/gtkgreet/style.css"
+    sudo cp "$SDDM_BG" "$GREETER_HOME/.config/omarchy/current/sddm-bg"
+    sudo chown -R greeter:greeter "$GREETER_HOME/.config"
 fi
 
 # ── VS Code theme ──────────────────────────────────────

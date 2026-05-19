@@ -1,7 +1,7 @@
 font=monospace 10
-background-color=#0B0C16
-text-color=#ddf7ff
-border-color=#82FB9C
+background-color=#2d353b
+text-color=#d3c6aa
+border-color=#7fbbb3
 border-size=2
 border-radius=6
 default-timeout=5000

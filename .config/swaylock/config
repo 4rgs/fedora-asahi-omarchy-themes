@@ -1,33 +1,33 @@
 font-size=18
 font=Cascadia Code NF
 
-color=#0B0C16
+color=#2d353b
 
-inside-color=#0B0C16
-inside-clear-color=#0B0C16
-inside-ver-color=#0B0C16
-inside-wrong-color=#0B0C16
+inside-color=#2d353b
+inside-clear-color=#2d353b
+inside-ver-color=#2d353b
+inside-wrong-color=#2d353b
 
-ring-color=#82FB9C
-ring-clear-color=#4fe88f
-ring-ver-color=#82FB9C
-ring-wrong-color=#50f872
+ring-color=#7fbbb3
+ring-clear-color=#a7c080
+ring-ver-color=#7fbbb3
+ring-wrong-color=#e67e80
 
-key-hl-color=#82FB9C
-text-color=#ddf7ff
-text-clear-color=#4fe88f
-text-ver-color=#82FB9C
-text-wrong-color=#50f872
+key-hl-color=#7fbbb3
+text-color=#d3c6aa
+text-clear-color=#a7c080
+text-ver-color=#7fbbb3
+text-wrong-color=#e67e80
 
-separator-color=#6a6e95
+separator-color=#475258
 
-line-color=#6a6e95
-line-clear-color=#4fe88f
-line-ver-color=#82FB9C
-line-wrong-color=#50f872
+line-color=#475258
+line-clear-color=#a7c080
+line-ver-color=#7fbbb3
+line-wrong-color=#e67e80
 
-bs-hl-color=#50f872
-caps-lock-color=#50f7d4
+bs-hl-color=#e67e80
+caps-lock-color=#dbbc7f
 
 effect-blur=7x5
 clock

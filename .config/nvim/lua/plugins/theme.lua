@@ -1,13 +1,10 @@
 return {
-	{
-		"bjarneo/hackerman.nvim",
-		dependencies = { "bjarneo/aether.nvim" }, -- Ensure aether is loaded first
-		priority = 1000,
-	},
+	{ "neanias/everforest-nvim" },
 	{
 		"LazyVim/LazyVim",
 		opts = {
-			colorscheme = "hackerman",
+			colorscheme = "everforest",
+			background = "soft",
 		},
 	},
 }
