@@ -37,3 +37,8 @@
 - SDDM now reads theme changes automatically without needing sudo after the initial setup
 - Switched to gruvbox theme across all apps (kitty, fuzzel, gtk, mako, nvim, swaylock, waybar, SDDM)
 - Fixed `omarchy-enable-sddm-theme` — hardcoded user path instead of `$HOME` to avoid sudo changing it to `/root`
+
+### Session Management TUI
+- Added `omarchy-sessiontui` — TUI for lock, logout, switch user, suspend, reboot, shutdown
+- Added `omarchy-launch-sessiontui` — single-instance launcher (TUI.float class)
+- Replaced swaynag exit with session TUI on `Super+Shift+e`

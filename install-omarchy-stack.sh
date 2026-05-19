@@ -225,7 +225,7 @@ bindsym $mod+Shift+o exec $HOME/.local/bin/omarchy-theme-select
 bindsym $mod+Shift+comma exec $HOME/.local/bin/omarchy-theme-bg-next
 
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes, exit' 'swaymsg exit'
+bindsym $mod+Shift+e exec $HOME/.local/bin/omarchy-launch-sessiontui
 
 floating_modifier $mod normal
 

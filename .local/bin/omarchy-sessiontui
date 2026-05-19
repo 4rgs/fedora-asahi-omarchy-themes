@@ -1,0 +1,31 @@
+#!/bin/bash
+# Session management TUI — omarchy-style with fzf
+
+clear
+echo ""
+echo -e "  \033[1m🔐 Omarchy Session Manager\033[0m"
+echo -e "  \033[2m──────────────────────────────────────\033[0m"
+echo ""
+
+choice=$(printf "🔒 Lock Screen\n🚪 Log Out\n🔄 Switch User\n💤 Suspend\n🔄 Reboot\n⏹  Shutdown" | fzf --height=10 --prompt="❯ " --reverse --no-info 2>/dev/null)
+
+case "$choice" in
+    "🔒 Lock Screen")
+        swaylock --config "$HOME/.config/swaylock/config"
+        ;;
+    "🚪 Log Out")
+        swaymsg exit
+        ;;
+    "🔄 Switch User")
+        loginctl terminate-user "$USER"
+        ;;
+    "💤 Suspend")
+        systemctl suspend
+        ;;
+    "🔄 Reboot")
+        systemctl reboot
+        ;;
+    "⏹  Shutdown")
+        systemctl poweroff
+        ;;
+esac
