@@ -1,0 +1,3 @@
+#!/bin/bash
+# Reload Sway config
+swaymsg reload

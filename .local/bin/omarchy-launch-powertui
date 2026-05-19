@@ -1,0 +1,4 @@
+#!/bin/bash
+# Launch powertui TUI Power Manager
+
+kitty --class=TUI.float -e /home/4rgs/.local/bin/omarchy-powertui

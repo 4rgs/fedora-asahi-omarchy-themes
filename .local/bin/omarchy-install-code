@@ -1,0 +1,9 @@
+#!/bin/bash
+# Install VS Code via flatpak if not present
+
+if flatpak list 2>/dev/null | grep -q com.visualstudio.code; then
+    echo "VS Code already installed"
+    exit 0
+fi
+
+flatpak install -y flathub com.visualstudio.code

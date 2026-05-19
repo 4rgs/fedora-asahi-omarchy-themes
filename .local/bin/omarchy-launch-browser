@@ -1,0 +1,3 @@
+#!/bin/bash
+# Launch default browser
+xdg-open https://duckduckgo.com 2>/dev/null || chromium 2>/dev/null || firefox 2>/dev/null || xdg-open about:blank

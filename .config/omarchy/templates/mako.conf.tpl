@@ -1,0 +1,9 @@
+font=monospace 10
+background-color={{ background }}
+text-color={{ foreground }}
+border-color={{ accent }}
+border-size=2
+border-radius=6
+default-timeout=5000
+max-icon-size=32
+sort=-time

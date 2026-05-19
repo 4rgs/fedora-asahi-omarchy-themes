@@ -1,0 +1,4 @@
+#!/bin/bash
+# Full screen screenshot
+grim "$HOME/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"
+notify-send "Screenshot" "Saved to Pictures"

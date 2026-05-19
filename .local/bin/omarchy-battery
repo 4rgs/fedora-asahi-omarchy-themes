@@ -1,0 +1,101 @@
+#!/bin/bash
+# Rich battery indicator for waybar
+# Reads from sysfs — outputs JSON with icon, percentage, tooltip, CSS class
+
+BAT_SYS="/sys/class/power_supply/macsmc-battery"
+AC_SYS="/sys/class/power_supply/macsmc-ac"
+
+read_sys() { cat "$1" 2>/dev/null || echo "0"; }
+
+status=$(read_sys "$BAT_SYS/status")
+capacity=$(read_sys "$BAT_SYS/capacity")
+power_now=$(read_sys "$BAT_SYS/power_now")
+energy_full_design=$(read_sys "$BAT_SYS/energy_full_design")
+energy_full=$(read_sys "$BAT_SYS/energy_full")
+cycle_count=$(read_sys "$BAT_SYS/cycle_count")
+temp_raw=$(read_sys "$BAT_SYS/temp")
+time_to_empty=$(read_sys "$BAT_SYS/time_to_empty_now")
+time_to_full=$(read_sys "$BAT_SYS/time_to_full_now")
+charge_start=$(read_sys "$BAT_SYS/charge_control_start_threshold")
+charge_end=$(read_sys "$BAT_SYS/charge_control_end_threshold")
+
+temp_c=$(echo "scale=1; $temp_raw / 10" | bc 2>/dev/null)
+temp_c="${temp_c:-N/A}"
+
+power_w="${power_now#-}"
+power_w=$(echo "scale=1; $power_w / 1000000" | bc 2>/dev/null)
+power_w="${power_w:-0}"
+
+health=$(echo "scale=1; $energy_full * 100 / $energy_full_design" | bc 2>/dev/null)
+
+# Time remaining string
+if [ "$status" = "Charging" ] && [ "$time_to_full" -gt 0 ] 2>/dev/null; then
+    minutes=$(( time_to_full / 60 ))
+    time_str="$(( minutes / 60 ))h $(( minutes % 60 ))m until full"
+elif [ "$status" = "Discharging" ] && [ "$time_to_empty" -gt 0 ] 2>/dev/null; then
+    minutes=$(( time_to_empty / 60 ))
+    time_str="$(( minutes / 60 ))h $(( minutes % 60 ))m remaining"
+else
+    time_str=""
+fi
+
+# Icon selection
+if [ "$status" = "Charging" ]; then
+    icon=""
+elif [ "$capacity" -ge 90 ]; then
+    icon=""
+elif [ "$capacity" -ge 70 ]; then
+    icon=""
+elif [ "$capacity" -ge 50 ]; then
+    icon=""
+elif [ "$capacity" -ge 30 ]; then
+    icon=""
+elif [ "$capacity" -ge 15 ]; then
+    icon=""
+else
+    icon=""
+fi
+
+# Color and class
+case "$status" in
+    Charging)
+        class="charging"
+        text_fmt="<span color='#a7c080'>${icon} ${capacity}%</span>"
+        ;;
+    Full)
+        class=""
+        text_fmt="<span color='#7fbbb3'>${icon} ${capacity}%</span>"
+        ;;
+    *)
+        if [ "$capacity" -le 10 ]; then
+            class="critical"
+            text_fmt="<span color='#e67e80'><b>${icon} ${capacity}%</b></span>"
+        elif [ "$capacity" -le 20 ]; then
+            class="warning"
+            text_fmt="<span color='#e67e80'>${icon} ${capacity}%</span>"
+        elif [ "$capacity" -le 30 ]; then
+            class=""
+            text_fmt="<span color='#dbbc7f'>${icon} ${capacity}%</span>"
+        else
+            class=""
+            text_fmt="${icon} ${capacity}%"
+        fi
+        ;;
+esac
+
+# Tooltip
+tooltip="<b>Battery</b>\n"
+tooltip+="Status: ${status}\n"
+tooltip+="Capacity: ${capacity}%\n"
+[ -n "$time_str" ] && tooltip+="Time: ${time_str}\n"
+tooltip+="Power: ${power_w}W\n"
+tooltip+="Health: ${health}%\n"
+tooltip+="Cycles: ${cycle_count}\n"
+tooltip+="Temp: ${temp_c}°C"
+if [ "$charge_start" != "100" ]; then
+    tooltip+="\nCharge range: ${charge_start}%-${charge_end}%"
+fi
+
+cat <<EOF
+{"text": "$text_fmt", "tooltip": "$tooltip", "class": "$class"}
+EOF

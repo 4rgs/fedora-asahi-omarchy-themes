@@ -1,0 +1,10 @@
+#!/bin/bash
+# Restore last theme on Sway startup
+
+THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || echo "")
+
+if [ -n "$THEME_NAME" ] && [ -d "$HOME/.config/omarchy/themes/$THEME_NAME" ]; then
+    "$HOME/.local/bin/omarchy-theme-set" "$THEME_NAME"
+else
+    "$HOME/.config/sway/wallpaper.sh" &
+fi

@@ -1,0 +1,260 @@
+#!/usr/bin/env python3
+"""Power management TUI — kanagawa-themed, terminal-based power menu."""
+
+import os
+import sys
+import subprocess
+import termios
+import tty
+import shutil
+from pathlib import Path
+
+# ── Kanagawa palette ──────────────────────────────────────────────────
+BG      = "\033[48;2;31;31;40m"  # #1f1f28
+FG      = "\033[38;2;220;215;186m"  # #dcd7ba
+RED     = "\033[38;2;230;126;128m"  # #e67e80
+GREEN   = "\033[38;2;167;192;128m"  # #a7c080
+YELLOW  = "\033[38;2;219;188;127m"  # #dbbc7f
+BLUE    = "\033[38;2;127;187;179m"  # #7fbbb3
+PURPLE  = "\033[38;2;179;142;209m"  # #b38ed1
+CYAN    = "\033[38;2;139;195;214m"  # #8bc3d6
+GRAY    = "\033[38;2;71;82;88m"     # #475258
+BOLD    = "\033[1m"
+DIM     = "\033[2m"
+RESET   = "\033[0m"
+CLS     = "\033[2J\033[H"
+HIDE    = "\033[?25l"
+SHOW    = "\033[?25h"
+
+# ── Battery data ──────────────────────────────────────────────────────
+BAT_SYS  = Path("/sys/class/power_supply/macsmc-battery")
+AC_SYS   = Path("/sys/class/power_supply/macsmc-ac")
+
+def read_sys(path):
+    try:
+        return path.read_text().strip()
+    except Exception:
+        return "0"
+
+def fmt(val, unit=""):
+    s = f"{val}{unit}"
+    return f"{GREEN if val != 'N/A' and unit == '%' and int(float(val)) > 50 else YELLOW if val != 'N/A' and unit == '%' and int(float(val)) > 20 else RED}{s}{FG}"
+
+def get_battery():
+    """Return dict of battery info."""
+    b = {}
+    b["status"]    = read_sys(BAT_SYS / "status")
+    b["capacity"]  = read_sys(BAT_SYS / "capacity")
+    b["power_now"] = read_sys(BAT_SYS / "power_now")
+    b["energy"]    = read_sys(BAT_SYS / "energy_now")
+    b["energy_full"]     = read_sys(BAT_SYS / "energy_full")
+    b["energy_full_design"] = read_sys(BAT_SYS / "energy_full_design")
+    b["cycles"]    = read_sys(BAT_SYS / "cycle_count")
+    b["temp_raw"]  = read_sys(BAT_SYS / "temp")
+    b["tt_empty"]  = read_sys(BAT_SYS / "time_to_empty_now")
+    b["tt_full"]   = read_sys(BAT_SYS / "time_to_full_now")
+    b["charge_start"] = read_sys(BAT_SYS / "charge_control_start_threshold")
+    b["charge_end"]   = read_sys(BAT_SYS / "charge_control_end_threshold")
+
+    p = abs(int(b["power_now"]))
+    b["power_w"] = round(p / 1_000_000, 1) if p else 0
+
+    ef = int(b["energy_full"] or 0)
+    ed = int(b["energy_full_design"] or 1)
+    b["health"] = round(ef * 100 / ed, 1) if ed else 0
+
+    t = int(b["temp_raw"])
+    b["temp_c"] = round(t / 10, 1) if t else "N/A"
+
+    def fmt_time(sec):
+        m = sec // 60
+        return f"{m//60}h {m%60}m"
+
+    if b["status"] == "Charging" and int(b["tt_full"]) > 0:
+        b["time_str"] = fmt_time(int(b["tt_full"])) + " until full"
+    elif b["status"] == "Discharging" and int(b["tt_empty"]) > 0:
+        b["time_str"] = fmt_time(int(b["tt_empty"])) + " remaining"
+    else:
+        b["time_str"] = ""
+
+    return b
+
+# ── Terminal helpers ──────────────────────────────────────────────────
+def term_size():
+    return shutil.get_terminal_size()
+
+def draw_bar(pct, width=20, char="█"):
+    n = round(pct / 100 * width)
+    n = max(0, min(width, n))
+    fill = char * n
+    empty = "░" * (width - n)
+    if pct > 50:
+        col = GREEN
+    elif pct > 20:
+        col = YELLOW
+    else:
+        col = RED
+    return f"{col}{fill}{GRAY}{empty}{FG}"
+
+def draw_battery_panel(b, cols):
+    lines = []
+    lines.append(f"  {BOLD}⚡ Battery Status{RESET}")
+    lines.append(f"  {'─' * (cols - 4)}")
+    status_icon = "🔌" if b["status"] == "Charging" else "🔋"
+    lines.append(f"  {status_icon} Status:     {CYAN}{b['status']}{FG}")
+    lines.append(f"  🔋 Charge:     {b['capacity']}%  {draw_bar(int(b['capacity']), 15)}")
+    if b["time_str"]:
+        lines.append(f"  ⏱  Time:       {BLUE}{b['time_str']}{FG}")
+    lines.append(f"  ⚡ Power:      {b['power_w']}W")
+    lines.append(f"  ❤  Health:     {fmt(b['health'], '%')}")
+    lines.append(f"  🔄 Cycles:     {BLUE}{b['cycles']}{FG}")
+    lines.append(f"  🌡  Temp:       {fmt(b['temp_c'], '°C') if isinstance(b['temp_c'], (int, float)) else b['temp_c']}")
+    cs, ce = int(b["charge_start"]), int(b["charge_end"])
+    if cs < 100:
+        lines.append(f"  🎯 Charge lim: {cs}% – {ce}%")
+    lines.append(f"  {'─' * (cols - 4)}")
+    return lines
+
+# ── Screen rendering ──────────────────────────────────────────────────
+def render(battery, items, selected, cols, rows):
+    out = [CLS]
+    out.append(f"{BOLD}{BG}")
+    out.append(f"  ⚡ Omarchy Power Manager{RESET}{BG}")
+    out.append(f"{DIM}  {'─' * (cols - 4)}{RESET}{BG}\n")
+
+    # Battery panel
+    panel = draw_battery_panel(battery, cols)
+    for line in panel:
+        out.append(f"{BG}{line}{RESET}{BG}")
+
+    out.append(f"\n{BG}")
+
+    # Menu items
+    for i, (icon, label, _) in enumerate(items):
+        prefix = f"{BLUE}▸{FG}" if i == selected else " "
+        if i == selected:
+            out.append(f"  {prefix} {BOLD}{CYAN}{icon} {label}{RESET}{BG}")
+        else:
+            out.append(f"  {prefix}  {GRAY}{icon}{FG} {label}{RESET}{BG}")
+
+    out.append(f"\n{DIM}  {'─' * (cols - 4)}{RESET}{BG}")
+    out.append(f"\n  {GRAY}↑↓ navigate  ↵  select  q  quit{RESET}{BG}")
+    out.append(RESET)
+    sys.stdout.write("".join(out))
+    sys.stdout.flush()
+
+def run_action(battery, action):
+    sys.stdout.write(SHOW)
+    sys.stdout.flush()
+    os.system("stty sane 2>/dev/null")
+
+    if action == "suspend":
+        subprocess.run(["systemctl", "suspend"])
+    elif action == "hibernate":
+        subprocess.run(["systemctl", "hibernate"])
+    elif action == "shutdown":
+        subprocess.run(["systemctl", "poweroff"])
+    elif action == "reboot":
+        subprocess.run(["systemctl", "reboot"])
+    elif action == "lock":
+        subprocess.run(["swaylock", "--config", os.path.expanduser("~/.config/swaylock/config")])
+    elif action == "info":
+        os.system("clear")
+        print(f"\n  {BOLD}⚡ Battery Details{RESET}\n")
+        print(f"  {'─' * 40}")
+        for k, v in battery.items():
+            if k != "time_str":
+                print(f"  {k.replace('_',' ').title():20s} : {v}")
+        print(f"  {'─' * 40}")
+        input(f"\n  {DIM}Press Enter to return{RESET}")
+    elif action == "profile":
+        profile_menu()
+
+def profile_menu():
+    os.system("clear")
+    profiles = [
+        ("⚡ Performance", "performance"),
+        ("⚖️  Balanced",   "balanced"),
+        ("🐢 Power Save",  "power-saver"),
+    ]
+    print(f"\n  {BOLD}🔋 Power Profile{RESET}\n")
+    for i, (label, _) in enumerate(profiles, 1):
+        print(f"  {i}. {label}")
+    print(f"\n  {DIM}0. Back{RESET}")
+    try:
+        choice = input(f"\n  {BLUE}❯{FG} ").strip()
+        if choice.isdigit() and 1 <= int(choice) <= len(profiles):
+            _, cmd = profiles[int(choice) - 1]
+            result = subprocess.run(["powerprofilesctl", "set", cmd],
+                                    capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"\n  {GREEN}✔ Profile set to {cmd}{RESET}")
+            else:
+                # Fallback to upower
+                print(f"\n  {YELLOW}powerprofilesctl not available.{RESET}")
+            input(f"\n  {DIM}Press Enter to return{RESET}")
+    except (ValueError, EOFError, KeyboardInterrupt):
+        pass
+
+def main():
+    if not BAT_SYS.exists():
+        print(f"{RED}No battery found at {BAT_SYS}{RESET}")
+        sys.exit(1)
+
+    stdin_fd = sys.stdin.fileno()
+    old_attr = termios.tcgetattr(stdin_fd)
+
+    items = [
+        ("🔋", "Battery Info",   "info"),
+        ("⚡", "Power Profile",  "profile"),
+        ("💤", "Suspend",        "suspend"),
+        ("⏹ ", "Shutdown",       "shutdown"),
+        ("🔄", "Reboot",         "reboot"),
+        ("🔒", "Lock Screen",    "lock"),
+    ]
+
+    try:
+        tty.setraw(stdin_fd)
+        selected = 0
+        battery = get_battery()
+        cols, rows = term_size()
+
+        render(battery, items, selected, cols, rows)
+
+        while True:
+            ch = sys.stdin.read(1)
+            if ch == "q":
+                break
+            elif ch == "\r" or ch == "\n":
+                _, _, action = items[selected]
+                run_action(battery, action)
+                battery = get_battery()
+                cols, rows = term_size()
+                render(battery, items, selected, cols, rows)
+            elif ch == "\033":
+                ch2 = sys.stdin.read(1)
+                if ch2 == "[":
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == "A":
+                        selected = (selected - 1) % len(items)
+                        render(battery, items, selected, cols, rows)
+                    elif ch3 == "B":
+                        selected = (selected + 1) % len(items)
+                        render(battery, items, selected, cols, rows)
+            elif ch == "j":
+                selected = (selected + 1) % len(items)
+                render(battery, items, selected, cols, rows)
+            elif ch == "k":
+                selected = (selected - 1) % len(items)
+                render(battery, items, selected, cols, rows)
+
+    except KeyboardInterrupt:
+        pass
+    finally:
+        termios.tcsetattr(stdin_fd, termios.TCSADRAIN, old_attr)
+        sys.stdout.write(SHOW + RESET + "\n")
+        os.system("stty sane 2>/dev/null")
+        os.system("clear")
+
+if __name__ == "__main__":
+    main()

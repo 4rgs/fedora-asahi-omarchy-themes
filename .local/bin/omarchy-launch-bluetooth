@@ -1,0 +1,5 @@
+#!/bin/bash
+# Launch bluetui TUI Bluetooth manager
+
+sudo rfkill unblock bluetooth 2>/dev/null
+kitty --class=TUI.float -e bluetui

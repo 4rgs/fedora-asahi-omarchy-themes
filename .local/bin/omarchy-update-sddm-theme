@@ -1,0 +1,23 @@
+#!/bin/bash
+# Sync current theme to system SDDM location (requires root)
+# Usage: sudo omarchy-update-sddm-theme
+
+THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || echo "none")
+THEME_SRC="$HOME/.config/sddm/themes/omarchy"
+
+if [ ! -d "$THEME_SRC" ]; then
+    echo "SDDM theme not found. Run omarchy-theme-set first."
+    exit 1
+fi
+
+# Sync QML, theme.conf, and image files
+sudo cp "$THEME_SRC"/*.qml /usr/share/sddm/themes/omarchy/ 2>/dev/null
+sudo cp "$THEME_SRC"/theme.conf /usr/share/sddm/themes/omarchy/ 2>/dev/null
+for img in "$THEME_SRC"/*.png "$THEME_SRC"/*.jpg; do
+    [ -f "$img" ] && sudo cp "$img" /usr/share/sddm/themes/omarchy/ 2>/dev/null
+done
+
+# Update background symlink
+sudo ln -sf "$HOME/.config/omarchy/current/sddm-bg" /usr/share/sddm/themes/omarchy/background 2>/dev/null
+
+echo "SDDM theme synced: $THEME_NAME"

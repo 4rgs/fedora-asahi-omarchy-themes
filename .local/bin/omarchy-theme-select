@@ -1,0 +1,25 @@
+#!/bin/bash
+# Interactive theme selector via fuzzel
+
+THEMES_DIR="$HOME/.config/omarchy/themes"
+ACTIVE=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || echo "")
+
+entries=()
+for d in "$THEMES_DIR"/*/; do
+    name=$(basename "$d")
+    marker=" "
+    [ "$name" = "$ACTIVE" ] && marker="●"
+    entries+=("$marker $name")
+done
+
+choice=$(printf '%s\n' "${entries[@]}" | fuzzel --dmenu --prompt="Theme: " --lines=10 2>/dev/null)
+
+if [ -z "$choice" ]; then
+    exit 0
+fi
+
+theme_name=$(echo "$choice" | sed 's/^[[:space:]]*[● ] //')
+
+if [ -n "$theme_name" ] && [ -d "$THEMES_DIR/$theme_name" ]; then
+    "$HOME/.local/bin/omarchy-theme-set" "$theme_name"
+fi

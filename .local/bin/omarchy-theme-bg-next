@@ -1,0 +1,35 @@
+#!/bin/bash
+# Cycle to next background from current theme
+
+THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || echo "")
+if [ -z "$THEME_NAME" ]; then
+    notify-send -u critical "No active theme"
+    exit 1
+fi
+
+BG_DIR="$HOME/.config/omarchy/backgrounds/$THEME_NAME"
+mapfile -t bgs < <(find "$BG_DIR" -type f \( -iname '*.png' -o -iname '*.jpg' \) 2>/dev/null)
+
+if [ ${#bgs[@]} -eq 0 ]; then
+    notify-send "No backgrounds for $THEME_NAME"
+    exit 0
+fi
+
+current_bg=$(ps aux | grep swaybg | grep -oP '(?<=-i )[^ ]+' | head -1)
+found=0
+for i in "${!bgs[@]}"; do
+    if [ "${bgs[$i]}" = "$current_bg" ]; then
+        next=$(( (i+1) % ${#bgs[@]} ))
+        found=1
+        break
+    fi
+done
+
+if [ "$found" -eq 0 ]; then
+    next=0
+fi
+
+pkill swaybg 2>/dev/null
+swaybg -i "${bgs[$next]}" -m fill &>/dev/null &
+disown
+notify-send "Background" "$(basename "${bgs[$next]}")"

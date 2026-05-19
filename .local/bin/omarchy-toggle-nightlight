@@ -1,0 +1,10 @@
+#!/bin/bash
+# Toggle night light (requires wlsunset or gammastep)
+if pgrep wlsunset &>/dev/null; then
+    pkill wlsunset
+    notify-send "Night light" "Off"
+else
+    wlsunset -t 3500 -T 6500 &>/dev/null &
+    disown
+    notify-send "Night light" "On"
+fi

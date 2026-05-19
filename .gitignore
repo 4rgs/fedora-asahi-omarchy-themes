@@ -1,0 +1,2 @@
+# Ignore everything by default - use git add -f for specific files
+*

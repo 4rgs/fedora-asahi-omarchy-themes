@@ -1,0 +1,5 @@
+#!/bin/bash
+# System update helper
+notify-send "Update" "Checking for updates..."
+sudo dnf upgrade --refresh -y 2>&1 | tail -5
+notify-send "Update" "Done"

@@ -1,0 +1,8 @@
+#!/bin/bash
+# Reset waybar config to Omarchy defaults
+
+cp "$HOME/.local/share/omarchy/defaults/waybar/config.jsonc" "$HOME/.config/waybar/config.jsonc" 2>/dev/null
+cp "$HOME/.local/share/omarchy/defaults/waybar/style.css" "$HOME/.config/waybar/style.css" 2>/dev/null
+
+omarchy-restart-waybar
+notify-send "Waybar" "Reset to defaults"

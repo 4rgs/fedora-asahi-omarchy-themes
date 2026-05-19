@@ -1,0 +1,9 @@
+font=monospace 10
+background-color=#282828
+text-color=#d4be98
+border-color=#7daea3
+border-size=2
+border-radius=6
+default-timeout=5000
+max-icon-size=32
+sort=-time

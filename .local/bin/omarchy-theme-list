@@ -1,0 +1,16 @@
+#!/bin/bash
+# List available themes
+
+THEMES_DIR="$HOME/.config/omarchy/themes"
+ACTIVE=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || echo "none")
+
+echo "Active theme: $ACTIVE"
+echo ""
+echo "Available themes:"
+echo "================="
+for d in "$THEMES_DIR"/*/; do
+    name=$(basename "$d")
+    marker=" "
+    [ "$name" = "$ACTIVE" ] && marker="●"
+    echo "  $marker $name"
+done

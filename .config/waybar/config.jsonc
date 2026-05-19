@@ -1,0 +1,68 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "margin-top": 2,
+    "margin-bottom": 0,
+    "spacing": 4,
+    "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "pulseaudio", "network", "bluetooth", "cpu", "memory", "custom/battery", "clock"],
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{icon}",
+        "format-icons": {
+            "default": " ",
+            "focused": " ",
+            "urgent": " "
+        }
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "{:%A, %d %B %Y}"
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": " {volume}%",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "scroll-step": 5,
+        "on-click": "pavucontrol"
+    },
+    "network": {
+        "format-wifi": " {essid}",
+        "format-ethernet": " ",
+        "format-disconnected": " ",
+        "tooltip-format": "{ifname} via {gwaddr}",
+        "on-click": "nm-connection-editor"
+    },
+    "bluetooth": {
+        "format": " ",
+        "format-disabled": "",
+        "on-click": "kitty --class=TUI.float -e bluetui",
+        "on-click-right": "blueman-manager"
+    },
+    "cpu": {
+        "format": " {}%",
+        "interval": 5
+    },
+    "memory": {
+        "format": " {}%",
+        "interval": 10
+    },
+    "custom/battery": {
+        "exec": "/home/4rgs/.local/bin/omarchy-battery",
+        "return-type": "json",
+        "interval": 30,
+        "on-click": "/home/4rgs/.local/bin/omarchy-launch-powertui",
+        "tooltip": true
+    },
+    "tray": {
+        "spacing": 10
+    }
+}

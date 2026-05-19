@@ -1,0 +1,31 @@
+@define-color bg #282828;
+@define-color fg #d4be98;
+@define-color accent #7daea3;
+@define-color selected_bg #d65d0e;
+@define-color selected_fg #ebdbb2;
+@define-color urgent #ea6962;
+@define-color success #a9b665;
+@define-color warning #d8a657;
+
+* {
+    background-color: @bg;
+    color: @fg;
+}
+
+entry,
+button,
+.view,
+.iconview {
+    background-color: shade(@bg, 1.2);
+    color: @fg;
+}
+
+entry:focus,
+button:hover {
+    border-color: @accent;
+}
+
+selection {
+    background-color: @accent;
+    color: @fg;
+}

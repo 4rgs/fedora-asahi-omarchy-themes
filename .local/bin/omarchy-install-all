@@ -1,0 +1,26 @@
+#!/bin/bash
+# Install all recommended Omarchy-style apps
+
+echo "Installing Omarchy-style apps..."
+echo ""
+
+echo "▸ Chromium browser..."
+"$HOME/.local/bin/omarchy-install-chromium"
+
+echo "▸ VS Code..."
+"$HOME/.local/bin/omarchy-install-code"
+
+echo "▸ bluetui (Bluetooth TUI)..."
+if ! command -v bluetui &>/dev/null; then
+    curl -sL "https://github.com/pythops/bluetui/releases/download/v0.8.1/bluetui-aarch64-linux-musl" -o "$HOME/.local/bin/bluetui"
+    chmod +x "$HOME/.local/bin/bluetui"
+    echo "  bluetui installed"
+else
+    echo "  bluetui already installed"
+fi
+
+echo ""
+echo "To enable SDDM theming (login screen), run:"
+echo "  sudo omarchy-enable-sddm-theme"
+echo ""
+echo "Done. Use omarchy-theme-set <theme> to apply theming."
