@@ -566,6 +566,11 @@ input type:touchpad {
 default_border pixel 1
 SWAYEOF
 
+# Ensure greeter can read theme files from user's home
+sudo chmod +x "$HOME"
+sudo chmod +x "$HOME/.config"
+sudo chmod -R +r "$HOME/.config/omarchy/current" 2>/dev/null
+
 # Set up greeter user groups
 sudo usermod -a -G video,input greeter 2>/dev/null || true
 

@@ -24,6 +24,11 @@ getent group seat &>/dev/null && usermod -a -G seat greeter 2>/dev/null || true
 mkdir -p /var/lib/greeter
 chown greeter:greeter /var/lib/greeter
 
+# Ensure greeter user can read theme files
+chmod +x "$ORIG_HOME"
+chmod +x "$ORIG_HOME/.config"
+chmod -R +r "$ORIG_HOME/.config/omarchy/current" 2>/dev/null
+
 # ── greetd daemon config ──
 mkdir -p /etc/greetd
 

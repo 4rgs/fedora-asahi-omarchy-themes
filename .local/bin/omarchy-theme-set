@@ -117,9 +117,11 @@ if [ ${#sddm_bgs[@]} -gt 0 ]; then
 elif [ -n "$bg" ]; then
     cp "$bg" "$SDDM_BG" 2>/dev/null
 fi
+chmod 644 "$SDDM_BG" 2>/dev/null
 
 # ── greetd / gtkgreet (login screen) ────────────────────
 process_template "$TEMPLATES_DIR/gtkgreet.css.tpl" "$HOME/.config/omarchy/current/gtkgreet.css"
+chmod 644 "$HOME/.config/omarchy/current/gtkgreet.css" 2>/dev/null
 
 # ── VS Code theme ──────────────────────────────────────
 if flatpak list 2>/dev/null | grep -q com.visualstudio.code; then
