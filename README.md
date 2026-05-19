@@ -1,11 +1,11 @@
 # Fedora Asahi Omarchy Themes
 
-Configuración estilo Omarchy para Fedora Asahi + Sway. Sistema completo de tematización con 19 temas, gestor de pantalla themado, bloqueo de pantalla, terminal transparente y más.
+Configuración estilo Omarchy para Fedora Asahi + Sway. Sistema completo de tematización con 19 temas, gestor de pantalla themado (greetd + gtkgreet), bloqueo de pantalla, terminal transparente y más.
 
 ## Requisitos
 
 - Fedora Asahi (Sway spin)
-- Los siguientes paquetes instalados: `sway`, `waybar`, `kitty`, `mako`, `fuzzel`, `swaylock`, `swaybg`, `btop`, `ranger`, `thunar`, `chromium-browser`
+- `sway`, `waybar`, `kitty`, `mako`, `fuzzel`, `swaylock`, `swaybg`, `btop`, `thunar`
 
 ## Instalación
 
@@ -16,18 +16,14 @@ git clone https://github.com/4rgs/fedora-asahi-omarchy-themes.git ~/dotfiles
 # 2. Copiar configs
 cp -r ~/dotfiles/.config/* ~/.config/
 cp -r ~/dotfiles/.local/bin/* ~/.local/bin/
-cp ~/dotfiles/.zshrc ~/
 
-# 3. Instalar dependencias opcionales
-omarchy-install-all
+# 3. Ejecutar instalador (paquetes, greetd, temas)
+~/dotfiles/install-omarchy-stack.sh
 
-# 4. Activar SDDM themado (login screen)
-sudo omarchy-enable-sddm-theme
-
-# 5. Aplicar tema
+# 4. Aplicar tema
 omarchy-theme-set gruvbox
 
-# 6. Recargar Sway
+# 5. Recargar Sway
 swaymsg reload
 ```
 
@@ -42,11 +38,13 @@ swaymsg reload
 | `$mod+Shift+O` | Selector de temas |
 | `$mod+Shift+,` | Siguiente fondo |
 | `$mod+Shift+W` | Siguiente wallpaper |
+| `$mod+Shift+E` | Menú de sesión (bloquear, cerrar sesión, cambiar usuario, suspender, reiniciar, apagar) |
+| `$mod+Shift+X` | Menú de energía (batería, perfiles, suspender, apagar) |
 | `$mod+Shift+F` | Thunar (explorador) |
 | `$mod+Shift+T` | Ranger (terminal) |
 | `$mod+Shift+B` | Chromium |
 | `$mod+Shift+V` | VS Code |
-| `$mod+Shift+Z` | Bluetooth TUI (bluetui) |
+| `$mod+Shift+Z` | Bluetooth TUI |
 | `$mod+Shift+N` | Alternar luz nocturna |
 | `$mod+Shift+U` | Actualizar sistema |
 | `$mod+Shift+R` | Reiniciar waybar |
@@ -77,7 +75,7 @@ tokyo-night       vantablack        white
 | GTK3/GTK4 (apps) | `~/.config/gtk-3.0/gtk.css` |
 | Btop (monitor) | `~/.config/btop/themes/<tema>.theme` |
 | Neovim (editor) | `~/.config/nvim/lua/plugins/theme.lua` |
-| SDDM (login) | `/usr/share/sddm/themes/omarchy/` |
+| greetd / gtkgreet (login) | CSS con colores del tema activo |
 | Chromium (navegador) | `chromium.theme` (4 temas) |
 | VS Code | `~/.config/Code/User/settings.json` |
 | Wallpaper | `~/.config/omarchy/backgrounds/<tema>/` |
@@ -89,14 +87,15 @@ tokyo-night       vantablack        white
 | `omarchy-theme-set <tema>` | Aplicar tema |
 | `omarchy-theme-select` | Selector interactivo (vía fuzzel) |
 | `omarchy-theme-bg-next` | Siguiente fondo del tema |
-| `omarchy-restore-theme` | Restaurar tema al inicio |
+| `omarchy-restore-theme` | Restaurar tema al inicio (vía sway autostart) |
 | `omarchy-restart-waybar` | Reiniciar waybar |
 | `omarchy-toggle-nightlight` | Alternar luz nocturna |
 | `omarchy-update` | Actualizar sistema |
 | `omarchy-launch-bluetooth` | Bluetooth TUI |
-| `omarchy-enable-sddm-theme` | Activar SDDM themado (sudo) |
-| `omarchy-update-sddm-theme` | Sincronizar SDDM tras cambio (sudo) |
-| `omarchy-install-all` | Instalar Chromium + VS Code + bluetui |
+| `omarchy-launch-powertui` | Menú de energía (batería, perfiles) |
+| `omarchy-launch-sessiontui` | Menú de sesión (bloquear, cerrar, cambiar usuario) |
+| `omarchy-battery` | Indicador de batería para waybar |
+| `omarchy-enable-greetd` | Activar greetd + gtkgreet (sudo, una vez) |
 
 ## Personalización
 
@@ -121,21 +120,3 @@ Editar `~/.config/sway/config`:
 gaps inner 20
 gaps outer 15
 ```
-
-## Changelog
-
-### v1.0.0 (2026-05-18)
-
-- Sistema de temas con 19 temas de Omarchy
-- Theming completo de: Waybar, Kitty, Mako, Fuzzel, Swaylock, GTK3/4, Btop, Neovim
-- SDDM login screen themado con colores del tema activo
-- Kitty terminal con 50% de opacidad y bordes minimalistas
-- Rotación automática de fondos de pantalla desde ~/Pictures
-- Selector interactivo de temas vía fuzzel ($mod+Shift+O)
-- Gestor Bluetooth TUI (bluetui) integrado
-- Chromium browser + VS Code instalación y theming
-- Scripts de instalación (omarchy-install-*)
-- Corrección de display manager (graphical.target)
-- Gaps de ventanas (inner 20, outer 15)
-- Sombra y transparencia en waybar
-- Temas guardados en repositorio GitHub
