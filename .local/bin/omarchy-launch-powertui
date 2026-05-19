@@ -4,5 +4,5 @@
 if swaymsg -t get_tree 2>/dev/null | grep -q '"app_id":"TUI.float"'; then
     swaymsg '[app_id="TUI.float"]' focus
 else
-    kitty --class=TUI.float -e /home/4rgs/.local/bin/omarchy-powertui
+    kitty --class=TUI.float -e "$(dirname "$0")/omarchy-powertui"
 fi

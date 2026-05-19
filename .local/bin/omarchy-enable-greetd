@@ -2,6 +2,9 @@
 # Enable greetd + gtkgreet as display manager (needs root)
 # Usage: sudo omarchy-enable-greetd
 
+ORIG_USER="${SUDO_USER:-$USER}"
+ORIG_HOME="$(getent passwd "$ORIG_USER" | cut -d: -f6)"
+
 if ! command -v greetd &>/dev/null || ! command -v gtkgreet &>/dev/null; then
     echo "Installing greetd and gtkgreet..."
     dnf install -y greetd gtkgreet greetd-selinux
@@ -27,10 +30,10 @@ EOF
 
 # ── Greeter Sway config ──
 # Reads theme files directly from user's home (root can access it)
-cat > /etc/greetd/greetd-sway-config << 'SWAYEOF'
+cat > /etc/greetd/greetd-sway-config << SWAYEOF
 # Minimal Sway config for greetd greeter
-exec swaybg -i /home/4rgs/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet --css /home/4rgs/.config/omarchy/current/gtkgreet.css
+exec swaybg -i $ORIG_HOME/.config/omarchy/current/sddm-bg -m fill
+exec gtkgreet --css $ORIG_HOME/.config/omarchy/current/gtkgreet.css
 
 input type:keyboard {
     xkb_layout "latam"

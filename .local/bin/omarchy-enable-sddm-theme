@@ -2,7 +2,9 @@
 # Enable themed SDDM login screen (needs root once)
 # Usage: sudo omarchy-enable-sddm-theme
 
-THEME_SRC="/home/4rgs/.config/sddm/themes/omarchy"
+ORIG_USER="${SUDO_USER:-$USER}"
+ORIG_HOME="$(getent passwd "$ORIG_USER" | cut -d: -f6)"
+THEME_SRC="$ORIG_HOME/.config/sddm/themes/omarchy"
 THEME_DST="/usr/share/sddm/themes/omarchy"
 
 if [ ! -d "$THEME_SRC" ]; then
@@ -15,7 +17,7 @@ mkdir -p "$THEME_DST"
 cp -r "$THEME_SRC"/* "$THEME_DST/"
 
 # Change ownership so omarchy-theme-set can write without sudo
-chown -R 4rgs:4rgs "$THEME_DST"
+chown -R "$ORIG_USER:$ORIG_USER" "$THEME_DST"
 
 # Create SDDM config
 tee /etc/sddm.conf.d/omarchy-theme.conf > /dev/null <<-EOF

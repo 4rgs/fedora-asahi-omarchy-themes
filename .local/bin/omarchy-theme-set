@@ -105,7 +105,7 @@ process_template "$TEMPLATES_DIR/sddm-Main.qml.tpl" "$HOME/.config/sddm/themes/o
 # Update SDDM theme.conf with current background
 cat > "$HOME/.config/sddm/themes/omarchy/theme.conf" <<-EOF
 [General]
-background=/home/4rgs/.config/omarchy/current/sddm-bg
+background=$HOME/.config/omarchy/current/sddm-bg
 EOF
 
 # Copy background for SDDM

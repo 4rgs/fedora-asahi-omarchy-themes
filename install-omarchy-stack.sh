@@ -544,10 +544,10 @@ command = "sway --config /etc/greetd/greetd-sway-config"
 user = "greeter"
 GREETDEOF
 
-sudo tee /etc/greetd/greetd-sway-config > /dev/null << 'SWAYEOF'
+sudo tee /etc/greetd/greetd-sway-config > /dev/null << SWAYEOF
 # Minimal Sway config for greetd greeter
-exec swaybg -i /home/4rgs/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet --css /home/4rgs/.config/omarchy/current/gtkgreet.css
+exec swaybg -i $HOME/.config/omarchy/current/sddm-bg -m fill
+exec gtkgreet --css $HOME/.config/omarchy/current/gtkgreet.css
 
 input type:keyboard {
     xkb_layout "latam"
