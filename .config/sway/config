@@ -62,7 +62,7 @@ for_window [app_id="nm-connection-editor"] floating enable
 for_window [app_id="org.gnome.Calculator"] floating enable
 for_window [app_id="org.gnome.Nautilus"] floating enable
 for_window [app_id="file-roller"] floating enable
-for_window [app_id="TUI.float"] floating enable, resize set 82 24, move position center
+for_window [app_id="TUI.float"] floating enable, move position center
 no_focus [window_type="dialog"]
 no_focus [app_id="nm-connection-editor"]
 

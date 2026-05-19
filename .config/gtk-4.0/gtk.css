@@ -1,11 +1,11 @@
-@define-color bg #282828;
-@define-color fg #d4be98;
-@define-color accent #7daea3;
-@define-color selected_bg #d65d0e;
-@define-color selected_fg #ebdbb2;
-@define-color urgent #ea6962;
-@define-color success #a9b665;
-@define-color warning #d8a657;
+@define-color bg #1f1f28;
+@define-color fg #dcd7ba;
+@define-color accent #7e9cd8;
+@define-color selected_bg #2d4f67;
+@define-color selected_fg #c8c093;
+@define-color urgent #c34043;
+@define-color success #76946a;
+@define-color warning #c0a36e;
 
 * {
     background-color: @bg;

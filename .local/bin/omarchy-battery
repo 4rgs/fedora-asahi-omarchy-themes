@@ -40,20 +40,25 @@ else
 fi
 
 # Icon selection
+CHARGE_ICON=""
+FULL_ICON=""
+HIGH_ICON=""
+MEDIUM_ICON=""
+LOW_ICON=""
+EMPTY_ICON=""
+
 if [ "$status" = "Charging" ]; then
-    icon=""
+    icon="$CHARGE_ICON"
 elif [ "$capacity" -ge 90 ]; then
-    icon=""
+    icon="$FULL_ICON"
 elif [ "$capacity" -ge 70 ]; then
-    icon=""
+    icon="$HIGH_ICON"
 elif [ "$capacity" -ge 50 ]; then
-    icon=""
+    icon="$MEDIUM_ICON"
 elif [ "$capacity" -ge 30 ]; then
-    icon=""
-elif [ "$capacity" -ge 15 ]; then
-    icon=""
+    icon="$LOW_ICON"
 else
-    icon=""
+    icon="$EMPTY_ICON"
 fi
 
 # Color and class
