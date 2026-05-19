@@ -121,15 +121,6 @@ fi
 # ── greetd / gtkgreet (login screen) ────────────────────
 process_template "$TEMPLATES_DIR/gtkgreet.css.tpl" "$HOME/.config/omarchy/current/gtkgreet.css"
 
-# Copy background and CSS to greeter user's config
-GREETER_HOME="/var/lib/greeter"
-if [ -d "$GREETER_HOME" ]; then
-    sudo mkdir -p "$GREETER_HOME/.config/gtkgreet" "$GREETER_HOME/.config/omarchy/current"
-    sudo cp "$HOME/.config/omarchy/current/gtkgreet.css" "$GREETER_HOME/.config/gtkgreet/style.css"
-    sudo cp "$SDDM_BG" "$GREETER_HOME/.config/omarchy/current/sddm-bg"
-    sudo chown -R greeter:greeter "$GREETER_HOME/.config"
-fi
-
 # ── VS Code theme ──────────────────────────────────────
 if flatpak list 2>/dev/null | grep -q com.visualstudio.code; then
     VSCODE_DIR="$HOME/.config/Code/User"

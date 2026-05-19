@@ -2,17 +2,21 @@
 # Enable greetd + gtkgreet as display manager (needs root)
 # Usage: sudo omarchy-enable-greetd
 
-set -e
-
 if ! command -v greetd &>/dev/null || ! command -v gtkgreet &>/dev/null; then
     echo "Installing greetd and gtkgreet..."
     dnf install -y greetd gtkgreet greetd-selinux
 fi
 
+# ── Create greeter user if missing ──
+if ! id -u greeter &>/dev/null; then
+    echo "Creating greeter user..."
+    useradd -r -s /bin/false -d /var/lib/greeter greeter
+fi
+
 # ── greetd daemon config ──
 mkdir -p /etc/greetd
 
-cat > /etc/greetd/config.toml << 'EOF'
+cat > /etc/greetd/config.toml << EOF
 [terminal]
 vt = 1
 
@@ -22,10 +26,11 @@ user = "greeter"
 EOF
 
 # ── Greeter Sway config ──
+# Reads theme files directly from user's home (root can access it)
 cat > /etc/greetd/greetd-sway-config << 'SWAYEOF'
 # Minimal Sway config for greetd greeter
-exec swaybg -i /var/lib/greeter/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet
+exec swaybg -i /home/4rgs/.config/omarchy/current/sddm-bg -m fill
+exec gtkgreet --css /home/4rgs/.config/omarchy/current/gtkgreet.css
 
 input type:keyboard {
     xkb_layout "latam"
@@ -43,22 +48,10 @@ default_border pixel 1
 include /etc/sway/config.d/*
 SWAYEOF
 
-# ── Ensure greeter user has config dirs ──
-GREETER_HOME=$(getent passwd greeter | cut -d: -f6)
-mkdir -p "$GREETER_HOME/.config/gtkgreet" "$GREETER_HOME/.config/omarchy/current"
-
-# Copy initial theme files if they exist
-if [ -f "/home/4rgs/.config/omarchy/current/gtkgreet.css" ]; then
-    cp "/home/4rgs/.config/omarchy/current/gtkgreet.css" "$GREETER_HOME/.config/gtkgreet/style.css"
-fi
-if [ -f "/home/4rgs/.config/omarchy/current/sddm-bg" ]; then
-    cp "/home/4rgs/.config/omarchy/current/sddm-bg" "$GREETER_HOME/.config/omarchy/current/sddm-bg"
-fi
-chown -R greeter:greeter "$GREETER_HOME/.config"
-
 # ── Disable SDDM, enable greetd ──
 systemctl disable --now sddm 2>/dev/null || true
 systemctl enable --now greetd
 
 echo "greetd enabled with gtkgreet."
-echo "Theme will sync automatically when running omarchy-theme-set."
+echo "Theme reads directly from ~/.config/omarchy/current/"
+echo "Run omarchy-theme-set <theme> to update the greeter."

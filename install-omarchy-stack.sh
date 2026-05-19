@@ -546,8 +546,8 @@ GREETDEOF
 
 sudo tee /etc/greetd/greetd-sway-config > /dev/null << 'SWAYEOF'
 # Minimal Sway config for greetd greeter
-exec swaybg -i /var/lib/greeter/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet
+exec swaybg -i /home/4rgs/.config/omarchy/current/sddm-bg -m fill
+exec gtkgreet --css /home/4rgs/.config/omarchy/current/gtkgreet.css
 
 input type:keyboard {
     xkb_layout "latam"
@@ -564,12 +564,6 @@ default_border pixel 1
 
 include /etc/sway/config.d/*
 SWAYEOF
-
-# Set up greeter user config
-GREETER_HOME=$(getent passwd greeter | cut -d: -f6)
-if [ -n "$GREETER_HOME" ]; then
-    sudo mkdir -p "$GREETER_HOME/.config/gtkgreet" "$GREETER_HOME/.config/omarchy/current"
-fi
 
 # Disable SDDM if installed, enable greetd
 sudo systemctl disable --now sddm 2>/dev/null || true
