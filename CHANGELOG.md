@@ -36,3 +36,4 @@
 - Updated `omarchy-enable-sddm-theme` — points `ThemeDir` directly to `~/.config/sddm/themes` instead of copying to `/usr/share/`
 - SDDM now reads theme changes automatically without needing sudo after the initial setup
 - Switched to gruvbox theme across all apps (kitty, fuzzel, gtk, mako, nvim, swaylock, waybar, SDDM)
+- Fixed `omarchy-enable-sddm-theme` — hardcoded user path instead of `$HOME` to avoid sudo changing it to `/root`
