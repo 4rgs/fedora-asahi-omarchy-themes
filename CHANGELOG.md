@@ -31,3 +31,8 @@
 ### Power Profiles
 - TUI dynamically lists available profiles from `powerprofilesctl list`
 - Graceful fallback when `powerprofilesctl` is unavailable
+
+### SDDM Theme Persistence
+- Updated `omarchy-enable-sddm-theme` — points `ThemeDir` directly to `~/.config/sddm/themes` instead of copying to `/usr/share/`
+- SDDM now reads theme changes automatically without needing sudo after the initial setup
+- Switched to gruvbox theme across all apps (kitty, fuzzel, gtk, mako, nvim, swaylock, waybar, SDDM)

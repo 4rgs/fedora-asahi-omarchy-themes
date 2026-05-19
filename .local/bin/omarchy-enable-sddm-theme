@@ -1,5 +1,5 @@
 #!/bin/bash
-# Enable themed SDDM login screen (requires root)
+# Enable themed SDDM login screen (needs root once)
 # Usage: sudo omarchy-enable-sddm-theme
 
 THEME_SRC="$HOME/.config/sddm/themes/omarchy"
@@ -9,28 +9,14 @@ if [ ! -d "$THEME_SRC" ]; then
     exit 1
 fi
 
-# Copy theme to system location so it persists across sessions
-sudo mkdir -p /usr/share/sddm/themes/omarchy
-sudo cp "$THEME_SRC"/*.qml /usr/share/sddm/themes/omarchy/ 2>/dev/null
-sudo cp "$THEME_SRC"/*.conf /usr/share/sddm/themes/omarchy/ 2>/dev/null
-sudo cp "$THEME_SRC"/*.png /usr/share/sddm/themes/omarchy/ 2>/dev/null
-sudo cp "$THEME_SRC"/*.jpg /usr/share/sddm/themes/omarchy/ 2>/dev/null
-sudo cp "$THEME_SRC"/*.desktop /usr/share/sddm/themes/omarchy/ 2>/dev/null
-sudo cp "$THEME_SRC"/*.svg /usr/share/sddm/themes/omarchy/ 2>/dev/null
-
-# Create SDDM config that uses the system theme
+# Point SDDM directly to the user's local theme directory
+# This way omarchy-theme-set updates are picked up automatically
 sudo tee /etc/sddm.conf.d/omarchy-theme.conf > /dev/null <<-EOF
 [Theme]
 Current=omarchy
+ThemeDir=/home/4rgs/.config/sddm/themes
 CursorTheme=Adwaita
-
-[General]
-DisplayServer=wayland
 EOF
 
-# Link the background so SDDM can access it
-sudo mkdir -p /usr/share/sddm/themes/omarchy
-sudo ln -sf "$HOME/.config/omarchy/current/sddm-bg" /usr/share/sddm/themes/omarchy/background 2>/dev/null
-
-echo "SDDM theme enabled. It will apply on next login."
-echo "Run 'sudo omarchy-update-sddm-theme' after changing themes to sync."
+echo "SDDM theme enabled — reads directly from ~/.config/sddm/themes/omarchy/"
+echo "Theme changes apply on next login without needing sudo."
