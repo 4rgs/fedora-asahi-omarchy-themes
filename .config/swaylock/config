@@ -1,33 +1,33 @@
 font-size=18
 font=Cascadia Code NF
 
-color=#282828
+color=#0B0C16
 
-inside-color=#282828
-inside-clear-color=#282828
-inside-ver-color=#282828
-inside-wrong-color=#282828
+inside-color=#0B0C16
+inside-clear-color=#0B0C16
+inside-ver-color=#0B0C16
+inside-wrong-color=#0B0C16
 
-ring-color=#7daea3
-ring-clear-color=#a9b665
-ring-ver-color=#7daea3
-ring-wrong-color=#ea6962
+ring-color=#82FB9C
+ring-clear-color=#4fe88f
+ring-ver-color=#82FB9C
+ring-wrong-color=#50f872
 
-key-hl-color=#7daea3
-text-color=#d4be98
-text-clear-color=#a9b665
-text-ver-color=#7daea3
-text-wrong-color=#ea6962
+key-hl-color=#82FB9C
+text-color=#ddf7ff
+text-clear-color=#4fe88f
+text-ver-color=#82FB9C
+text-wrong-color=#50f872
 
-separator-color=#3c3836
+separator-color=#6a6e95
 
-line-color=#3c3836
-line-clear-color=#a9b665
-line-ver-color=#7daea3
-line-wrong-color=#ea6962
+line-color=#6a6e95
+line-clear-color=#4fe88f
+line-ver-color=#82FB9C
+line-wrong-color=#50f872
 
-bs-hl-color=#ea6962
-caps-lock-color=#d8a657
+bs-hl-color=#50f872
+caps-lock-color=#50f7d4
 
 effect-blur=7x5
 clock

@@ -118,6 +118,14 @@ elif [ -n "$bg" ]; then
     cp "$bg" "$SDDM_BG" 2>/dev/null
 fi
 
+# Sync to system SDDM theme dir (if user-writable)
+SDDM_SYSTEM="/usr/share/sddm/themes/omarchy"
+if [ -w "$SDDM_SYSTEM" ]; then
+    cp "$HOME/.config/sddm/themes/omarchy/Main.qml" "$SDDM_SYSTEM/Main.qml" 2>/dev/null
+    cp "$HOME/.config/sddm/themes/omarchy/theme.conf" "$SDDM_SYSTEM/theme.conf" 2>/dev/null
+    cp "$SDDM_BG" "$SDDM_SYSTEM/background" 2>/dev/null
+fi
+
 # ── VS Code theme ──────────────────────────────────────
 if flatpak list 2>/dev/null | grep -q com.visualstudio.code; then
     VSCODE_DIR="$HOME/.config/Code/User"

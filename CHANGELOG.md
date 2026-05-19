@@ -33,10 +33,11 @@
 - Graceful fallback when `powerprofilesctl` is unavailable
 
 ### SDDM Theme Persistence
-- Updated `omarchy-enable-sddm-theme` — points `ThemeDir` directly to `~/.config/sddm/themes` instead of copying to `/usr/share/`
-- SDDM now reads theme changes automatically without needing sudo after the initial setup
+- Rewrote `omarchy-enable-sddm-theme` — copies theme to `/usr/share/sddm/themes/omarchy/` and `chown`s to user, so `omarchy-theme-set` can update it without sudo
+- Updated `omarchy-theme-set` — syncs QML, theme.conf, and background to `/usr/share/sddm/themes/omarchy/` when the user owns it
+- SELinux-safe: system theme dir avoids home directory access restrictions
+- Added `omarchy-enable-sddm-theme` call to install script
 - Switched to gruvbox theme across all apps (kitty, fuzzel, gtk, mako, nvim, swaylock, waybar, SDDM)
-- Fixed `omarchy-enable-sddm-theme` — hardcoded user path instead of `$HOME` to avoid sudo changing it to `/root`
 
 ### Session Management TUI
 - Added `omarchy-sessiontui` — TUI for lock, logout, switch user, suspend, reboot, shutdown

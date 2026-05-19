@@ -543,6 +543,10 @@ Session=sway.desktop
 SDDMEOF
 sudo systemctl enable --now sddm 2>/dev/null || true
 
+# Enable themed SDDM login screen
+sudo "$HOME/.local/bin/omarchy-enable-sddm-theme" 2>/dev/null || \
+    warn "Run 'sudo $HOME/.local/bin/omarchy-enable-sddm-theme' after first theme setup"
+
 # ─── Enable system services ──────────────────────────────────────────────────
 info "Enabling system services..."
 sudo systemctl enable --now power-profiles-daemon 2>/dev/null || true
@@ -573,6 +577,7 @@ echo "  - Super+Enter      = foot terminal"
 echo "  - Super+d          = fuzzel app launcher (type any app name)"
 echo "  - Super+Shift+d    = wmenu-run (alt launcher)"
 echo "  - Super+Shift+l    = lock screen"
+echo "  - Super+Shift+e    = session menu (logout/reboot/shutdown/switch user)"
 echo "  - Super+Shift+w    = cycle wallpaper"
 echo "  - Print            = full screenshot"
 echo "  - Super+Print      = region screenshot (click & drag)"
