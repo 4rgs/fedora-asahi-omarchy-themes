@@ -13,8 +13,16 @@ fi
 # ── Create greeter user if missing ──
 if ! id -u greeter &>/dev/null; then
     echo "Creating greeter user..."
-    useradd -r -s /bin/false -d /var/lib/greeter greeter
+    useradd -r -s /bin/bash -d /var/lib/greeter greeter
 fi
+
+# Ensure greeter has proper groups for GPU/input access
+usermod -a -G video,input greeter 2>/dev/null
+getent group seat &>/dev/null && usermod -a -G seat greeter 2>/dev/null || true
+
+# Ensure greeter has a writable home
+mkdir -p /var/lib/greeter
+chown greeter:greeter /var/lib/greeter
 
 # ── greetd daemon config ──
 mkdir -p /etc/greetd
@@ -28,12 +36,14 @@ command = "sway --config /etc/greetd/greetd-sway-config"
 user = "greeter"
 EOF
 
-# ── Greeter Sway config ──
-# Reads theme files directly from user's home (root can access it)
+# ── Greeter Sway config (no /etc/sway/config.d/* — those need systemd user session) ──
 cat > /etc/greetd/greetd-sway-config << SWAYEOF
 # Minimal Sway config for greetd greeter
-exec swaybg -i $ORIG_HOME/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet --css $ORIG_HOME/.config/omarchy/current/gtkgreet.css
+set $bg_path $ORIG_HOME/.config/omarchy/current/sddm-bg
+set $css_path $ORIG_HOME/.config/omarchy/current/gtkgreet.css
+
+exec_always swaybg -i $bg_path -m fill
+exec_always gtkgreet --css $css_path
 
 input type:keyboard {
     xkb_layout "latam"
@@ -47,9 +57,16 @@ input type:touchpad {
 }
 
 default_border pixel 1
-
-include /etc/sway/config.d/*
 SWAYEOF
+
+# ── Environment for the greeter (GDK backend, path, etc.) ──
+mkdir -p /etc/systemd/system/greetd.service.d
+cat > /etc/systemd/system/greetd.service.d/override.conf << SYSTEMDEOF
+[Service]
+Environment=GDK_BACKEND=wayland
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+SYSTEMDEOF
+systemctl daemon-reload
 
 # ── Disable SDDM, enable greetd ──
 systemctl disable --now sddm 2>/dev/null || true
