@@ -2,7 +2,7 @@
 # Enable themed SDDM login screen (needs root once)
 # Usage: sudo omarchy-enable-sddm-theme
 
-THEME_SRC="$HOME/.config/sddm/themes/omarchy"
+THEME_SRC="/home/4rgs/.config/sddm/themes/omarchy"
 
 if [ ! -d "$THEME_SRC" ]; then
     echo "SDDM theme not found. Run omarchy-theme-set <theme> first."
