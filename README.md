@@ -120,3 +120,18 @@ Editar `~/.config/sway/config`:
 gaps inner 20
 gaps outer 15
 ```
+
+## Changelog
+
+### v2.0.0 (2026-05-19)
+
+- **Display Manager**: SDDM reemplazado por greetd + gtkgreet — login screen themado con CSS generado desde los colores del tema activo
+- **Session TUI**: Nuevo `omarchy-sessiontui` con lock, logout, switch user, suspend, reboot, shutdown (`$mod+Shift+E`)
+- **Power TUI**: `omarchy-powertui` con indicador de batería, perfiles de energía, suspend, shutdown, reboot
+- **Battery indicator**: Indicador personalizado en waybar con iconos Font Awesome, porcentaje, tooltip con salud/ciclos/temperatura
+- **TUIs como floating overlay**: Todas las TUIs usan `app_id=TUI.float`, se abren centradas y flotantes, una instancia a la vez
+- **Temas**: 19 temas, switcheo completo via `omarchy-theme-set <tema>`
+- **Greetd CSS**: Template `gtkgreet.css.tpl` con placeholders de colores del tema
+- **Paths relativos**: Todos los scripts usan `$HOME`, `$SUDO_USER`, `$(dirname "$0")` — replicable en cualquier sistema
+- **SELinux compatible**: greetd lee archivos de tema desde `/home/` con permisos adecuados
+- **Instalador**: `install-omarchy-stack.sh` actualizado con greetd en lugar de SDDM
