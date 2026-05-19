@@ -2,8 +2,10 @@ window {
     background-color: {{ background }};
 }
 
-window > box {
-    background-color: {{ background }};
+box#body {
+    background-color: rgba({{ background_rgb }}, 0.85);
+    border-radius: 10px;
+    padding: 50px;
 }
 
 entry {
@@ -30,14 +32,4 @@ button {
 
 button:hover {
     background-color: {{ accent }};
-}
-
-label {
-    color: {{ foreground }};
-    font-size: 14px;
-}
-
-label.title {
-    font-size: 24px;
-    font-weight: bold;
 }

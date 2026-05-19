@@ -36,14 +36,15 @@ command = "sway --config /etc/greetd/greetd-sway-config"
 user = "greeter"
 EOF
 
-# ── Greeter Sway config (no /etc/sway/config.d/* — those need systemd user session) ──
-cat > /etc/greetd/greetd-sway-config << SWAYEOF
+# ── Greeter Sway config ──
+# Heredoc uses single-quoted SWAYEOF so bash does NOT expand $bg_path/$css_path
+cat > /etc/greetd/greetd-sway-config << 'SWAYEOF'
 # Minimal Sway config for greetd greeter
-set $bg_path $ORIG_HOME/.config/omarchy/current/sddm-bg
-set $css_path $ORIG_HOME/.config/omarchy/current/gtkgreet.css
+set $bg_path BG_PATH_PLACEHOLDER
+set $css_path CSS_PATH_PLACEHOLDER
 
 exec_always swaybg -i $bg_path -m fill
-exec_always gtkgreet --css $css_path
+exec "gtkgreet -l -s $css_path; swaymsg exit"
 
 input type:keyboard {
     xkb_layout "latam"
@@ -59,9 +60,13 @@ input type:touchpad {
 default_border pixel 1
 SWAYEOF
 
+# Replace placeholders with real paths (after heredoc so bash expands $ORIG_HOME)
+sed -i "s|BG_PATH_PLACEHOLDER|$ORIG_HOME/.config/omarchy/current/sddm-bg|g" /etc/greetd/greetd-sway-config
+sed -i "s|CSS_PATH_PLACEHOLDER|$ORIG_HOME/.config/omarchy/current/gtkgreet.css|g" /etc/greetd/greetd-sway-config
+
 # ── Environment for the greeter (GDK backend, path, etc.) ──
 mkdir -p /etc/systemd/system/greetd.service.d
-cat > /etc/systemd/system/greetd.service.d/override.conf << SYSTEMDEOF
+cat > /etc/systemd/system/greetd.service.d/override.conf << 'SYSTEMDEOF'
 [Service]
 Environment=GDK_BACKEND=wayland
 Environment=PATH=/usr/local/bin:/usr/bin:/bin

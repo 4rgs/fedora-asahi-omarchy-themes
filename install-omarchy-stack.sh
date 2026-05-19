@@ -546,8 +546,11 @@ GREETDEOF
 
 sudo tee /etc/greetd/greetd-sway-config > /dev/null << SWAYEOF
 # Minimal Sway config for greetd greeter
-exec swaybg -i $HOME/.config/omarchy/current/sddm-bg -m fill
-exec gtkgreet --css $HOME/.config/omarchy/current/gtkgreet.css
+set \$bg_path $HOME/.config/omarchy/current/sddm-bg
+set \$css_path $HOME/.config/omarchy/current/gtkgreet.css
+
+exec_always swaybg -i \$bg_path -m fill
+exec "gtkgreet -l -s \$css_path; swaymsg exit"
 
 input type:keyboard {
     xkb_layout "latam"
@@ -561,9 +564,19 @@ input type:touchpad {
 }
 
 default_border pixel 1
-
-include /etc/sway/config.d/*
 SWAYEOF
+
+# Set up greeter user groups
+sudo usermod -a -G video,input greeter 2>/dev/null || true
+
+# Environment for the greeter
+sudo mkdir -p /etc/systemd/system/greetd.service.d
+sudo tee /etc/systemd/system/greetd.service.d/override.conf > /dev/null << 'SYSTEMDEOF'
+[Service]
+Environment=GDK_BACKEND=wayland
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+SYSTEMDEOF
+sudo systemctl daemon-reload
 
 # Disable SDDM if installed, enable greetd
 sudo systemctl disable --now sddm 2>/dev/null || true
